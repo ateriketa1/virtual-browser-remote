@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Virtual Browser</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="desktop-shell">
+      <header class="topbar">
+        <div class="brand-group">
+          <div class="brand-dot"></div>
+          <span>Remote Desktop Browser</span>
+        </div>
+
+        <div class="toolbar">
+          <button id="newSessionBtn" class="tool-button accent">New Session</button>
+          <button id="refreshBtn" class="tool-button">Refresh</button>
+        </div>
+
+        <div class="address-bar-wrap">
+          <input id="addressInput" type="text" value="https://google.com" placeholder="Enter a website URL" />
+          <button id="goBtn" class="go-button">Go</button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="sidebar">
+          <h3>Quick Access</h3>
+          <div class="quick-links">
+            <button class="site-button" data-url="https://google.com">Google</button>
+            <button class="site-button" data-url="https://github.com">GitHub</button>
+            <button class="site-button" data-url="https://youtube.com">YouTube</button>
+            <button class="site-button" data-url="https://reddit.com">Reddit</button>
+            <button class="site-button" data-url="https://news.ycombinator.com">Hacker News</button>
+          </div>
+
+          <div class="status-card">
+            <span class="status-label">Status</span>
+            <strong id="statusText">Idle</strong>
+          </div>
+        </aside>
+
+        <section class="browser-panel">
+          <div class="browser-header">
+            <div class="window-controls">
+              <span class="control red"></span>
+              <span class="control yellow"></span>
+              <span class="control green"></span>
+            </div>
+            <div class="browser-title" id="browserTitle">New session</div>
+          </div>
+
+          <div class="browser-view">
+            <img id="browserView" alt="Remote browser preview" />
+            <div id="emptyState" class="empty-state">
+              No page loaded yet.
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

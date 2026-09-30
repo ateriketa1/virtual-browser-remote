@@ -1,0 +1,92 @@
+const express = require('express');
+const path = require('path');
+const cors = require('cors');
+const compression = require('compression');
+const dotenv = require('dotenv');
+const { BrowserManager } = require('./backend/browser-manager');
+
+dotenv.config();
+
+const app = express();
+const publicDir = path.join(__dirname, 'public');
+const browserManager = new BrowserManager();
+
+app.use(compression());
+app.use(cors());
+app.use(express.json());
+app.use(express.static(publicDir));
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+app.post('/api/browser/create-session', async (req, res) => {
+  try {
+    const sessionId = await browserManager.createSession();
+    res.json({ sessionId });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/browser/navigate', async (req, res) => {
+  try {
+    const { sessionId, url } = req.body;
+
+    if (!sessionId || !url) {
+      return res.status(400).json({ error: 'sessionId and url are required' });
+    }
+
+    const result = await browserManager.navigate(sessionId, url);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/browser/refresh', async (req, res) => {
+  try {
+    const { sessionId } = req.body;
+
+    if (!sessionId) {
+      return res.status(400).json({ error: 'sessionId is required' });
+    }
+
+    const result = await browserManager.refresh(sessionId);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/browser/close-session', async (req, res) => {
+  try {
+    const { sessionId } = req.body;
+
+    if (!sessionId) {
+      return res.status(400).json({ error: 'sessionId is required' });
+    }
+
+    await browserManager.closeSession(sessionId);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(publicDir, 'index.html'));
+});
+
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+
+  res.sendFile(path.join(publicDir, 'index.html'));
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Virtual browser server running on http://localhost:${PORT}`);
+});
